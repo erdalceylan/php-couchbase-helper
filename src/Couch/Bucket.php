@@ -1,0 +1,128 @@
+<?php
+/**
+ * Created by IntelliJ IDEA.
+ * User: erdal
+ * Date: 20.02.2018
+ * Time: 09:40
+ */
+
+namespace Couch\Buckets;
+
+use Couch\Doc;
+use Couch\Doc\Fields\Mixed_;
+use Couchbase\Cluster;
+
+/**
+ * Class Bucket
+ * @package Couch
+ */
+abstract class Bucket
+{
+    /**
+     * @var \Couchbase\Bucket
+     */
+    private $bucket;
+
+    /**
+     * Bucket constructor.
+     * @param Cluster $cluster
+     */
+    public function __construct(Cluster $cluster)
+    {
+        $this->setBucket($cluster->openBucket(self::bucketName()));
+    }
+
+    /**
+     * @return \Couchbase\Bucket
+     */
+    public abstract function getBucket();
+
+    /**
+     * @param \Couchbase\Bucket $bucket
+     * @return $this
+     */
+    public abstract function setBucket($bucket);
+
+    /**
+     * @return string
+     */
+    public static abstract function bucketName();
+
+    /**
+     * @param Doc $doc
+     * @param string $id
+     * @return array|\Couchbase\Document
+     */
+    public function upsert(Doc $doc, $id)
+    {
+        return $this->bucket->upsert((string)$id, $doc->toArray(true));
+    }
+
+    /**
+     * update like sql
+     * @param Doc $doc
+     * @param Mixed_ $where
+     * @return bool|object
+     * @throws \Exception
+     */
+    public function update(Doc $doc, Mixed_ $where)
+    {
+        $unset = [];
+        $set = [];
+        $sql = "UPDATE " . self::bucketName();
+
+        if (count($doc->toArray()) === 0) {
+            return false;
+        }
+
+        foreach ($doc->getFields() as $field) {
+
+            if ($field instanceof Doc\Fields\Delete) {
+                $unset[] = $field->getName();
+            } else {
+                $set[] = $field->getName() . '=$' . $field->getName();
+            }
+        }
+
+        if (count($set) > 0) {
+            $sql .= " SET " . implode(",", $set);
+        }
+
+        if (count($unset) > 0) {
+            $sql .= " UNSET " . implode(",", $unset);
+        }
+
+        if (count($unset) > 0 || count($set) > 0) {
+
+            $sql .= ' WHERE ' . $where->getName() . '=$whereValue';
+
+            $namedParams = $doc->toArray(true);
+
+            $namedParams["whereValue"] = $where->getValue();
+
+            $query = \CouchbaseN1qlQuery::fromString($sql);
+            $query->namedParams($namedParams);
+
+            return $this->bucket->query($query);
+        }
+
+        return false;
+    }
+
+    /**
+     * @param Mixed_ $where
+     * @return object
+     */
+    public function delete(Mixed_ $where)
+    {
+        $sql = "DELETE FROM" . self::bucketName() . " WHERE " . $where->getName() . '=$' . $where->getName();
+
+        $query = \CouchbaseN1qlQuery::fromString($sql);
+        $query->namedParams([
+            $where->getName() => $where->getValue()
+        ]);
+
+        return $this->bucket->query($query);
+
+    }
+}

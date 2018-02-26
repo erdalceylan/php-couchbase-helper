@@ -1,0 +1,24 @@
+{
+  "name": "erdalceylan/php-couchbase-helper",
+  "description": "php couchbase helper",
+  "type": "library",
+  "keywords": ["php", "couchbase", "hepler", "builder", "dynamic"],
+  "license": "GPL-3.0+",
+  "authors": [
+    {
+      "name": "Erdal CEYLAN",
+      "email": "erdalceylan25@gmail.com",
+      "homepage": "https://github.com/erdalceylan"
+    }
+  ],
+  "require": {
+    "php": ">=7.0",
+    "ext-couchbase": "5.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Couch\\": "src/Couch"
+    }
+  },
+  "version": "0.0.1"
+}
