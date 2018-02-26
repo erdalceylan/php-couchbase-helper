@@ -13,12 +13,12 @@
   ],
   "require": {
     "php": ">=7.0",
-    "ext-couchbase": "5.*"
+    "ext-couchbase": "2.*"
   },
   "autoload": {
     "psr-4": {
       "Couch\\": "src/Couch"
     }
   },
-  "version": "1.0.0"
+  "version": "1.0.1"
 }
