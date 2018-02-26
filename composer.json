@@ -3,7 +3,7 @@
   "description": "php couchbase helper",
   "type": "library",
   "keywords": ["php", "couchbase", "hepler", "builder", "dynamic"],
-  "license": "GPL-3.0+",
+  "license": "MIT",
   "authors": [
     {
       "name": "Erdal CEYLAN",
@@ -20,5 +20,5 @@
       "Couch\\": "src/Couch"
     }
   },
-  "version": "0.0.1"
+  "version": "1.0.0"
 }
