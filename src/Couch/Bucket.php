@@ -83,7 +83,7 @@ abstract class Bucket
 
         foreach ($doc->getFields() as $field) {
 
-            if ($field instanceof Doc\Fields\Delete) {
+            if ($field instanceof Doc\Fields\Unset_) {
                 $unset[] = $field->getName();
             } else {
                 $set[] = $field->getName() . '=$' . $field->getName();

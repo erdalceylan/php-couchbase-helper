@@ -13,7 +13,7 @@ namespace Couch\Doc\Fields;
  * Class Delete
  * @package Couch\Doc
  */
-class Delete extends Field
+class Unset_ extends Field
 {
 
     /**

@@ -11,7 +11,7 @@ namespace Couch;
 use Couch\Doc\Fields\ArrayInt;
 use Couch\Doc\Fields\ArrayStr;
 use Couch\Doc\Fields\Date;
-use Couch\Doc\Fields\Delete;
+use Couch\Doc\Fields\Unset_;
 use Couch\Doc\Fields\Field;
 use Couch\Doc\Fields\Integer_;
 use Couch\Doc\Fields\Null_;
@@ -155,17 +155,41 @@ class Doc
     }
 
     /**
+     * @param $name
+     * @return $this
+     */
+    public function addUnset($name)
+    {
+        $unset = new Unset_();
+        $unset->setName($name);
+
+        $this->add($unset);
+
+        return $this;
+    }
+
+    /**
      * remove field by name
      * @param string $name
      * @return $this
      */
-    public function remove($name)
+    public function removeField($name)
     {
         foreach ($this->fields as $key => $field) {
             if ($field->getName() === $name) {
                 array_splice($this->fields, $key, 1);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function flush()
+    {
+        $this->fields = [];
 
         return $this;
     }
@@ -189,7 +213,7 @@ class Doc
 
         foreach ($this->fields as $field) {
 
-            if ($ignoreDeleteField && $field instanceof Delete) {
+            if ($ignoreDeleteField && $field instanceof Unset_) {
                 continue;
             }
 
