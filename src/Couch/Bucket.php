@@ -34,13 +34,20 @@ abstract class Bucket
     /**
      * @return \Couchbase\Bucket
      */
-    public abstract function getBucket();
+    public function getBucket()
+    {
+        return $this->bucket;
+    }
 
     /**
      * @param \Couchbase\Bucket $bucket
      * @return $this
      */
-    public abstract function setBucket($bucket);
+    public function setBucket(\Couchbase\Bucket $bucket)
+    {
+        $this->bucket = $bucket;
+        return $this;
+    }
 
     /**
      * @return string
