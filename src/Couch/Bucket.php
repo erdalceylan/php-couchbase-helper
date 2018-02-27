@@ -28,7 +28,7 @@ abstract class Bucket
      */
     public function __construct(Cluster $cluster)
     {
-        $this->setBucket($cluster->openBucket(self::bucketName()));
+        $this->setBucket($cluster->openBucket($this->getBucketName()));
     }
 
     /**
@@ -52,7 +52,7 @@ abstract class Bucket
     /**
      * @return string
      */
-    public static abstract function bucketName();
+    public abstract function getBucketName();
 
     /**
      * @param Doc $doc
@@ -129,6 +129,5 @@ abstract class Bucket
         ]);
 
         return $this->bucket->query($query);
-
     }
 }
