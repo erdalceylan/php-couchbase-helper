@@ -6,9 +6,8 @@
  * Time: 09:40
  */
 
-namespace Couch\Buckets;
+namespace Couch;
 
-use Couch\Doc;
 use Couch\Doc\Fields\Mixed_;
 use Couchbase\Cluster;
 
