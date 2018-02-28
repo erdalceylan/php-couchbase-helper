@@ -90,10 +90,20 @@ class Doc
     {
         if (!is_array($value) && !is_object($value)) {
 
+            $tmpVal = $value;
+
+            if(is_bool($value)){
+                $tmpVal = $value ? 'true' : 'false';
+            }
+
+            if(is_null($value)){
+                $tmpVal = 'null';
+            }
+
             $str = new Str();
             $str
-                ->setName((string)$name)
-                ->setValue(var_export($value, true));
+                ->setName((string) $name)
+                ->setValue((string) $tmpVal);
 
             $this->add($str);
         }
