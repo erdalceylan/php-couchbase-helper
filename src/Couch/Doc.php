@@ -88,12 +88,12 @@ class Doc
      */
     public function addStr($name, $value)
     {
-        if (is_string($value)) {
+        if (!is_array($value) && !is_object($value)) {
 
             $str = new Str();
             $str
                 ->setName((string)$name)
-                ->setValue((string)$value);
+                ->setValue(var_export($value, true));
 
             $this->add($str);
         }
