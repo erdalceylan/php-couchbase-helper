@@ -75,7 +75,7 @@ abstract class Bucket
     {
         $unset = [];
         $set = [];
-        $sql = "UPDATE " . $this->getBucketName();
+        $sql = "UPDATE `" . $this->getBucketName()."`";
 
         if (count($doc->toArray()) === 0) {
             return false;
@@ -121,7 +121,7 @@ abstract class Bucket
      */
     public function delete(Mixed_ $where)
     {
-        $sql = "DELETE FROM" . $this->getBucketName() . " WHERE " . $where->getName() . '=$' . $where->getName();
+        $sql = "DELETE FROM `" . $this->getBucketName() . "` WHERE " . $where->getName() . '=$' . $where->getName();
 
         $query = \CouchbaseN1qlQuery::fromString($sql);
         $query->namedParams([
