@@ -17,7 +17,6 @@ use Couchbase\Cluster;
  */
 abstract class Bucket
 {
-    Const PARAM_NAME_END_FIX_FOR_RESERVED_WORDS ="_name";
     /**
      * @var \Couchbase\Bucket
      */
@@ -76,7 +75,6 @@ abstract class Bucket
     {
         $unset = [];
         $set = [];
-        $namedParams = [];
         $sql = "UPDATE `" . $this->getBucketName()."`";
 
         if (count($doc->toArray()) === 0) {
@@ -86,14 +84,10 @@ abstract class Bucket
         foreach ($doc->getFields() as $field) {
 
             if ($field instanceof Doc\Fields\Unset_) {
-                $unset[] = $field->getName();
 
+                $unset[] = "`" . $field->getName()."`";
             } else {
-                $fixedFieldName =  $field->getName().self::PARAM_NAME_END_FIX_FOR_RESERVED_WORDS;
-
-                $set[] = $field->getName() . '=$' .$fixedFieldName;
-
-                $namedParams[$fixedFieldName] = $field->getValue();
+                $set[] = "`" . $field->getName() . "`" . '=$' . $field->getName();
             }
         }
 
@@ -107,7 +101,9 @@ abstract class Bucket
 
         if (count($unset) > 0 || count($set) > 0) {
 
-            $sql .= ' WHERE ' . $where->getName() . '=$whereValue';
+            $sql .= ' WHERE ' . "`" . $where->getName() . "`" . '=$whereValue';
+
+            $namedParams = $doc->toArray(true);
 
             $namedParams["whereValue"] = $where->getValue();
 
@@ -126,7 +122,7 @@ abstract class Bucket
      */
     public function delete(Mixed_ $where)
     {
-        $sql = "DELETE FROM `" . $this->getBucketName() . "` WHERE " . $where->getName() . '=$' . $where->getName();
+        $sql = "DELETE FROM `" . $this->getBucketName() . "` WHERE `" . $where->getName() . '`=$' . $where->getName();
 
         $query = \CouchbaseN1qlQuery::fromString($sql);
         $query->namedParams([
