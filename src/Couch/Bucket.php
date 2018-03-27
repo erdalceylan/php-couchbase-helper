@@ -17,6 +17,7 @@ use Couchbase\Cluster;
  */
 abstract class Bucket
 {
+    Const PARAM_NAME_END_FIX_FOR_RESERVED_WORDS ="_name";
     /**
      * @var \Couchbase\Bucket
      */
@@ -75,6 +76,7 @@ abstract class Bucket
     {
         $unset = [];
         $set = [];
+        $namedParams = [];
         $sql = "UPDATE `" . $this->getBucketName()."`";
 
         if (count($doc->toArray()) === 0) {
@@ -85,8 +87,13 @@ abstract class Bucket
 
             if ($field instanceof Doc\Fields\Unset_) {
                 $unset[] = $field->getName();
+
             } else {
-                $set[] = $field->getName() . '=$' . $field->getName();
+                $fixedFieldName =  $field->getName().self::PARAM_NAME_END_FIX_FOR_RESERVED_WORDS;
+
+                $set[] = $field->getName() . '=$' .$fixedFieldName;
+
+                $namedParams[$fixedFieldName] = $field->getValue();
             }
         }
 
@@ -101,8 +108,6 @@ abstract class Bucket
         if (count($unset) > 0 || count($set) > 0) {
 
             $sql .= ' WHERE ' . $where->getName() . '=$whereValue';
-
-            $namedParams = $doc->toArray(true);
 
             $namedParams["whereValue"] = $where->getValue();
 
